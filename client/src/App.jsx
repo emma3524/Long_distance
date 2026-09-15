@@ -1,10 +1,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import LoginPage    from './pages/LoginPage';
-import CheckInFlow  from './pages/CheckInFlow';
-import AdminLayout  from './pages/admin/AdminLayout';
-import AdminUsers   from './pages/admin/AdminUsers';
-import AdminHistory from './pages/admin/AdminHistory';
+import LoginPage       from './pages/LoginPage';
+import CheckInFlow     from './pages/CheckInFlow';
+import AdminLayout     from './pages/admin/AdminLayout';
+import AdminUsers      from './pages/admin/AdminUsers';
+import AdminHistory    from './pages/admin/AdminHistory';
+import AdminQuestions  from './pages/admin/AdminQuestions';
 
 function RequireAuth({ children }) {
   const { user, loading } = useAuth();
@@ -32,8 +33,9 @@ export default function App() {
       <Route path="/admin" element={
         <RequireAdmin><AdminLayout /></RequireAdmin>
       }>
-        <Route index     element={<AdminUsers />} />
+        <Route index                  element={<AdminUsers />} />
         <Route path="history/:userId" element={<AdminHistory />} />
+        <Route path="questions"       element={<AdminQuestions />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

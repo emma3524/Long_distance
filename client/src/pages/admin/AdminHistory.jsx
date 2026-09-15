@@ -3,14 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../../api';
 
 const LABELS = {
-  mood:        'Mood',
-  activity:    'Activity',
-  missLevel:   'Miss you level',
-  smiledAt:    'Smiled at',
-  ateWell:     'Ate well',
-  energyLevel: 'Energy',
-  wants:       'Wanted',
-  facetime:    'FaceTime',
+  mood:          'Mood',
+  activity:      'Activity',
+  missLevel:     'Miss you level',
+  ateWell:       'Ate well',
+  energyLevel:   'Energy',
+  wants:         'Wanted',
+  facetime:      'FaceTime',
+  dailyQuestion: 'Daily question',
+  dailyAnswer:   'Their answer',
 };
 
 export default function AdminHistory() {

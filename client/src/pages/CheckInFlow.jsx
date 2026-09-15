@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../api';
 
-/* ── PAGE DEFINITIONS ── */
+/* ── FIXED PAGE DEFINITIONS ── */
 const TOTAL_STEPS = 6;
 
-const PAGES = [
+const FIXED_PAGES = [
   { id: 'mood',     step: 1, type: 'grid',
     question: 'How are you feeling today?',
     quote: '"In all the world,\nthere is no heart\nfor me like yours."',
@@ -31,10 +31,7 @@ const PAGES = [
     format: v => `${Math.round(v / 20)}/5 🥺`,
     key: 'missLevel' },
 
-  { id: 'smile',    step: 4, type: 'list',
-    question: 'What made you smile?',
-    options: ['Thinking of you 💗','Good food 🍲','A cute animal 🐶','A funny meme 😂','Getting things done ✨','Not much today'],
-    key: 'smiledAt' },
+  // step 4 is reserved for the daily rotating question (injected dynamically)
 
   { id: 'food',     step: 5, type: 'list',
     question: 'Did you eat properly?',
@@ -59,6 +56,13 @@ const PAGES = [
     key: 'facetime' },
 ];
 
+// Fallback page used when no questions exist in the pool yet
+const FALLBACK_DAILY_PAGE = {
+  id: 'daily', step: 4, type: 'daily',
+  question: 'What made you smile today?',
+  key: 'dailyAnswer',
+};
+
 /* ── COMPONENT ── */
 export default function CheckInFlow() {
   const { user, logout, refreshUser } = useAuth();
@@ -67,12 +71,39 @@ export default function CheckInFlow() {
   const [answers,  setAnswers]  = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [result,   setResult]   = useState(null);
+  const [pages,    setPages]    = useState(FIXED_PAGES);
+  const [dailyPage, setDailyPage] = useState(null); // the injected daily question page
 
-  // Check if already checked in today
+  // Check if already checked in today + fetch today's daily question
   useEffect(() => {
     apiFetch('/api/checkin/today')
       .then(d => { if (d.checkedIn) setScreen('alreadyDone'); })
       .catch(() => {});
+
+    apiFetch('/api/checkin/daily-question')
+      .then(d => {
+        const dp = d.question
+          ? { id: 'daily', step: 4, type: 'daily', question: d.question.text, questionText: d.question.text, key: 'dailyAnswer' }
+          : { ...FALLBACK_DAILY_PAGE };
+        setDailyPage(dp);
+
+        // Build ordered page list: first 3 fixed → daily → rest of fixed
+        setPages([
+          ...FIXED_PAGES.slice(0, 3),  // mood, activity, miss
+          dp,
+          ...FIXED_PAGES.slice(3),     // food, energy, wants, facetime
+        ]);
+      })
+      .catch(() => {
+        // If endpoint fails just use fallback
+        const dp = { ...FALLBACK_DAILY_PAGE };
+        setDailyPage(dp);
+        setPages([
+          ...FIXED_PAGES.slice(0, 3),
+          dp,
+          ...FIXED_PAGES.slice(3),
+        ]);
+      });
   }, []);
 
   function setAnswer(key, val) {
@@ -80,7 +111,7 @@ export default function CheckInFlow() {
   }
 
   function next() {
-    if (pageIdx < PAGES.length - 1) setPageIdx(i => i + 1);
+    if (pageIdx < pages.length - 1) setPageIdx(i => i + 1);
     else handleSubmit();
   }
   function back() {
@@ -91,9 +122,14 @@ export default function CheckInFlow() {
   async function handleSubmit() {
     setSubmitting(true);
     try {
+      // Snapshot the daily question text alongside the answer so admin can read it
+      const submittedAnswers = {
+        ...answers,
+        dailyQuestion: dailyPage ? dailyPage.question : undefined,
+      };
       const data = await apiFetch('/api/checkin', {
         method: 'POST',
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ answers: submittedAnswers }),
       });
       setResult(data);
       refreshUser();
@@ -161,8 +197,8 @@ export default function CheckInFlow() {
   }
 
   /* ── CHECK-IN FLOW ── */
-  const page = PAGES[pageIdx];
-  const isLast = pageIdx === PAGES.length - 1;
+  const page = pages[pageIdx];
+  const isLast = pageIdx === pages.length - 1;
 
   return (
     <div className="flow-page checkin-page">
@@ -231,6 +267,18 @@ export default function CheckInFlow() {
               <span>{page.labels[0]}</span><span>{page.labels[1]}</span>
             </div>
           )}
+        </div>
+      )}
+
+      {page.type === 'daily' && (
+        <div className="daily-question-input">
+          <textarea
+            className="daily-textarea"
+            rows={5}
+            placeholder="Type your answer here… 💭"
+            value={answers[page.key] || ''}
+            onChange={e => setAnswer(page.key, e.target.value)}
+          />
         </div>
       )}
 

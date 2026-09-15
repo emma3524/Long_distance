@@ -1,7 +1,29 @@
-const router  = require('express').Router();
-const CheckIn = require('../models/CheckIn');
-const User    = require('../models/User');
+const router   = require('express').Router();
+const CheckIn  = require('../models/CheckIn');
+const User     = require('../models/User');
+const Question = require('../models/Question');
 const { protect } = require('../middleware/auth');
+
+// GET /api/checkin/daily-question  — returns today's question (date-based rotation)
+// Returns { question: { _id, text } } or { question: null } if pool is empty
+router.get('/daily-question', protect, async (_req, res) => {
+  try {
+    const questions = await Question.find().sort({ createdAt: 1 });
+    if (questions.length === 0) return res.json({ question: null });
+
+    // Deterministic rotation: use day-of-year to pick index
+    const now       = new Date();
+    const start     = new Date(now.getFullYear(), 0, 0);
+    const diff      = now - start;
+    const oneDay    = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay); // 1–365
+    const idx       = dayOfYear % questions.length;
+
+    res.json({ question: questions[idx] });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // GET /api/checkin/today  — has the user already checked in today?
 router.get('/today', protect, async (req, res) => {

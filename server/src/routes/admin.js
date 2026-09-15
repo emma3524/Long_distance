@@ -1,6 +1,7 @@
-const router  = require('express').Router();
-const User    = require('../models/User');
-const CheckIn = require('../models/CheckIn');
+const router   = require('express').Router();
+const User     = require('../models/User');
+const CheckIn  = require('../models/CheckIn');
+const Question = require('../models/Question');
 const { protect, adminOnly } = require('../middleware/auth');
 
 // All admin routes require auth + admin role
@@ -52,6 +53,42 @@ router.patch('/users/:id/message', async (req, res) => {
   );
   if (!user) return res.status(404).json({ message: 'User not found' });
   res.json({ user });
+});
+
+// ── QUESTION POOL ──────────────────────────────────────────────────────────────
+
+// GET /api/admin/questions  — list all questions in the pool
+router.get('/questions', async (_req, res) => {
+  try {
+    const questions = await Question.find().sort({ createdAt: -1 });
+    res.json({ questions });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/admin/questions  — add a new question to the pool
+router.post('/questions', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim())
+      return res.status(400).json({ message: 'Question text is required' });
+
+    const question = await Question.create({ text: text.trim() });
+    res.status(201).json({ question });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE /api/admin/questions/:id  — remove a question from the pool
+router.delete('/questions/:id', async (req, res) => {
+  try {
+    await Question.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Question deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

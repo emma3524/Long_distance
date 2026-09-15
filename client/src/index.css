@@ -336,6 +336,55 @@ input[type="range"] { width: 100%; accent-color: #f472b6; cursor: pointer; }
 .modal textarea:focus { border-color: #f472b6; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
 
+/* ── DAILY QUESTION ── */
+.daily-question-input { display: flex; flex-direction: column; gap: 0.5rem; }
+.daily-textarea {
+  width: 100%; padding: 1rem;
+  border: 2px solid #fce7f3; border-radius: 14px;
+  font-size: 0.95rem; font-family: inherit; color: #3d0026;
+  background: #fff; resize: none; outline: none;
+  line-height: 1.6;
+  min-height: 140px;
+}
+.daily-textarea:focus { border-color: #f472b6; }
+.daily-textarea::placeholder { color: #c8a4b8; }
+
+/* ── ADMIN QUESTIONS ── */
+.add-question-form {
+  background: #fff; border: 1.5px solid #fce7f3; border-radius: 14px;
+  padding: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem;
+}
+.add-question-form h3 { color: #3d0026; font-size: 1rem; }
+.add-question-form textarea {
+  width: 100%; padding: 0.75rem; resize: vertical;
+  border: 1.5px solid #fce7f3; border-radius: 10px;
+  font-size: 0.9rem; font-family: inherit; outline: none; color: #3d0026;
+  min-height: 80px;
+}
+.add-question-form textarea:focus { border-color: #f472b6; }
+
+.question-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.question-card {
+  background: #fff; border: 1.5px solid #fce7f3; border-radius: 14px;
+  padding: 1rem 1.1rem;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem;
+}
+.question-card p { font-size: 0.93rem; color: #3d0026; line-height: 1.5; flex: 1; }
+.question-card .question-meta { font-size: 0.72rem; color: #bbb; margin-top: 0.25rem; }
+
+.admin-nav {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  padding-bottom: 0.5rem; border-bottom: 1.5px solid #fce7f3; margin-bottom: 0.25rem;
+}
+.admin-nav a, .admin-nav button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  background: #fce7f3; color: #c0749a;
+}
+.admin-nav a.active { background: #f472b6; color: #fff; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 360px) {
   .option-grid { grid-template-columns: repeat(2, 1fr); }

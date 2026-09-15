@@ -10,6 +10,14 @@ export default function AdminLayout() {
         <button className="logout-link" onClick={logout}>Sign out</button>
       </header>
       <main className="admin-main">
+        <nav className="admin-nav">
+          <NavLink to="/admin" end className={({ isActive }) => isActive ? 'active' : ''}>
+            Users
+          </NavLink>
+          <NavLink to="/admin/questions" className={({ isActive }) => isActive ? 'active' : ''}>
+            Daily Questions
+          </NavLink>
+        </nav>
         <Outlet />
       </main>
     </div>
