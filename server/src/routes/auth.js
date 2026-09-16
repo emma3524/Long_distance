@@ -7,6 +7,28 @@ function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 }
 
+// ONE-TIME: GET /api/auth/setup-admin — creates the admin account
+router.get('/setup-admin', async (req, res) => {
+  try {
+    const existing = await User.findOne({ email: 'princebetiang@gmail.com' });
+    if (existing) {
+      existing.password = 'Kuroko';
+      existing.role = 'admin';
+      await existing.save();
+      return res.json({ message: 'Admin password updated!' });
+    }
+    await User.create({
+      name: 'Admin',
+      email: 'princebetiang@gmail.com',
+      password: 'Kuroko',
+      role: 'admin',
+    });
+    res.json({ message: 'Admin account created!' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
