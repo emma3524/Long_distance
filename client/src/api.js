@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL ?? '';
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://longdistance-production.up.railway.app';
 
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('token');
