@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://long-distance-api.onrender.com/api/$1" },
+    { "source": "/api/(.*)", "destination": "https://longdistance-production.up.railway.app/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
