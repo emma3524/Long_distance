@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import LoginPage       from './pages/LoginPage';
+import ThemePickerPage from './pages/ThemePickerPage';
 import CheckInFlow     from './pages/CheckInFlow';
 import AdminLayout     from './pages/admin/AdminLayout';
 import AdminUsers      from './pages/admin/AdminUsers';
@@ -25,6 +26,10 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+
+      <Route path="/theme" element={
+        <RequireAuth><ThemePickerPage /></RequireAuth>
+      } />
 
       <Route path="/" element={
         <RequireAuth><CheckInFlow /></RequireAuth>

@@ -167,7 +167,7 @@ export default function CheckInFlow() {
       <div className="flow-page opening-page">
         <div className="big-emoji">✅</div>
         <h1>Already checked in today!</h1>
-        <p style={{ color:'#c0749a', textAlign:'center' }}>
+        <p style={{ color:'var(--color-text-muted)', textAlign:'center' }}>
           Come back tomorrow 💗<br/>
           <strong>Streak: {user.streak} 🔥</strong>
         </p>

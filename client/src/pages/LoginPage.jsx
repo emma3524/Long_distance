@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       if (mode === 'login') {
         const user = await login(email, password);
-        navigate(user.role === 'admin' ? '/admin' : '/', { replace: true });
+        navigate(user.role === 'admin' ? '/admin' : '/theme', { replace: true });
       } else {
         // Sign up then auto login
         if (!name.trim()) throw new Error('Name is required');
@@ -29,7 +29,7 @@ export default function LoginPage() {
           body: JSON.stringify({ name, email, password }),
         });
         const user = await login(email, password);
-        navigate(user.role === 'admin' ? '/admin' : '/', { replace: true });
+        navigate(user.role === 'admin' ? '/admin' : '/theme', { replace: true });
       }
     } catch (err) {
       setError(err.message);
@@ -99,7 +99,7 @@ export default function LoginPage() {
           {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
           <button
             onClick={switchMode}
-            style={{ background: 'none', border: 'none', color: '#f472b6', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}
+            style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}
           >
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>
