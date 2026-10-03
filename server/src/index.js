@@ -9,7 +9,25 @@ const adminRoutes  = require('./routes/admin');
 
 const app = express();
 
-app.use(cors({ origin: '*' }));
+// Allow the production Vercel URL, any Vercel preview deployment, and localhost dev
+const ALLOWED_ORIGINS = [
+  'https://long-distance-rouge.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+app.use(cors({
+  origin(origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    // Allow any *.vercel.app subdomain (covers all preview deployments)
+    if (origin.endsWith('.vercel.app') || ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 app.use('/api/auth',    authRoutes);
