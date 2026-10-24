@@ -1,8 +1,6 @@
-const BASE_URL = 'https://longdistance-production.up.railway.app';
-
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
