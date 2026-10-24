@@ -36,6 +36,16 @@ app.use('/api/admin',   adminRoutes);
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
+// Keep Render free tier alive by pinging self every 14 minutes
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
+if (RENDER_URL) {
+  setInterval(() => {
+    fetch(`${RENDER_URL}/api/health`)
+      .then(() => console.log('Self-ping ok'))
+      .catch(err => console.error('Self-ping failed:', err.message));
+  }, 14 * 60 * 1000); // 14 minutes
+}
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
