@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://longdistance-production.up.railway.app/api/:path*"
+      "destination": "https://long-distance-3mhx.onrender.com/api/:path*"
     },
     {
       "source": "/:path*",
